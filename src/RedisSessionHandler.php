@@ -24,7 +24,7 @@ class RedisSessionHandler extends \SessionHandler
      *
      * @var \Redis
      */
-    private $redis;
+    protected $redis;
 
     /**
      * The maximum number of seconds that any given
@@ -38,7 +38,7 @@ class RedisSessionHandler extends \SessionHandler
      *
      * @var int
      */
-    private $lock_ttl;
+    protected $lock_ttl;
 
     /**
      * The maximum number of seconds that a session
@@ -50,7 +50,7 @@ class RedisSessionHandler extends \SessionHandler
      *
      * @var int
      */
-    private $session_ttl;
+    protected $session_ttl;
 
     /**
      * A collection of every session ID that has been generated
@@ -62,7 +62,7 @@ class RedisSessionHandler extends \SessionHandler
      *
      * @var string[]
      */
-    private $new_sessions = [];
+    protected $new_sessions = [];
 
     /**
      * A collection of every session ID that is being locked by
@@ -71,14 +71,14 @@ class RedisSessionHandler extends \SessionHandler
      *
      * @var string[]
      */
-    private $open_sessions = [];
+    protected $open_sessions = [];
 
     /**
      * The name of the session cookie.
      *
      * @var string
      */
-    private $cookieName;
+    protected $cookieName;
 
     /**
      * @throws \RuntimeException When the phpredis extension is not available.
@@ -207,7 +207,7 @@ class RedisSessionHandler extends \SessionHandler
     /**
      * @param string $session_id
      */
-    private function acquireLockOn($session_id)
+    protected function acquireLockOn($session_id)
     {
         $options = ['nx'];
         if (0 < $this->lock_ttl) {
@@ -226,7 +226,7 @@ class RedisSessionHandler extends \SessionHandler
         $this->open_sessions[] = $session_id;
     }
 
-    private function releaseLocks()
+    protected function releaseLocks()
     {
         foreach ($this->open_sessions as $session_id) {
             $this->redis->del("{$session_id}_lock");
@@ -247,7 +247,7 @@ class RedisSessionHandler extends \SessionHandler
      *
      * @return bool
      */
-    private function mustRegenerate($session_id)
+    protected function mustRegenerate($session_id)
     {
         return false === $this->isNew($session_id)
             && false === $this->redis->exists($session_id);
@@ -258,7 +258,7 @@ class RedisSessionHandler extends \SessionHandler
      *
      * @return bool
      */
-    private function isNew($session_id)
+    protected function isNew($session_id)
     {
         return isset($this->new_sessions[$session_id]);
     }
